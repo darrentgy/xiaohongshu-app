@@ -1,0 +1,378 @@
+/* SearchBar 组件样式 */
+.search-bar {
+  position: relative;
+  margin-bottom: var(--spacing-6);
+  padding: 0 var(--spacing-4);
+}
+
+.search-bar__form {
+  display: flex;
+  gap: var(--spacing-3);
+  align-items: stretch;
+}
+
+.search-bar__input-container {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background: var(--color-bg-primary);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  transition: all var(--transition-fast);
+  overflow: hidden;
+}
+
+.search-bar__input-container--focused {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+}
+
+.search-bar__input-container--has-value {
+  border-color: var(--color-border-dark);
+}
+
+.search-bar__icon {
+  position: absolute;
+  left: var(--spacing-4);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-base);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+}
+
+.search-bar__loading-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--color-gray-300);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.search-bar__input {
+  width: 100%;
+  padding: var(--spacing-3) var(--spacing-16) var(--spacing-3) var(--spacing-12);
+  border: none;
+  background: transparent;
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  outline: none;
+  font-family: var(--font-family-primary);
+}
+
+.search-bar__input::placeholder {
+  color: var(--color-text-disabled);
+  transition: color var(--transition-fast);
+}
+
+.search-bar__input:focus::placeholder {
+  color: var(--color-gray-400);
+}
+
+.search-bar__clear-button {
+  position: absolute;
+  right: var(--spacing-12);
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--color-gray-400);
+  color: var(--color-white);
+  border: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-size: var(--font-size-xs);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+  transition: all var(--transition-fast);
+  z-index: 2;
+}
+
+.search-bar__clear-button:hover {
+  background: var(--color-gray-500);
+  opacity: 1;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.search-bar__clear-button:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.search-bar__character-count {
+  position: absolute;
+  right: var(--spacing-3);
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-disabled);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.search-bar__input-container--focused .search-bar__character-count {
+  opacity: 1;
+}
+
+.search-bar__submit-button {
+  padding: var(--spacing-3) var(--spacing-6);
+  background: var(--color-primary-gradient);
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--radius-xl);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 80px;
+  height: auto;
+  white-space: nowrap;
+}
+
+.search-bar__submit-button:hover:not(:disabled) {
+  background: var(--color-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.search-bar__submit-button:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+.search-bar__submit-button:disabled {
+  background: var(--color-gray-300);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.search-bar__button-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: var(--color-white);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.search-bar__help-text {
+  margin-top: var(--spacing-2);
+  padding: 0 var(--spacing-2);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-disabled);
+  text-align: center;
+  line-height: var(--line-height-normal);
+}
+
+/* 搜索建议 */
+.search-bar__suggestions {
+  position: absolute;
+  top: 100%;
+  left: var(--spacing-4);
+  right: var(--spacing-4);
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  z-index: var(--z-dropdown);
+  max-height: 200px;
+  overflow-y: auto;
+  margin-top: var(--spacing-1);
+}
+
+.search-bar__suggestion {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  width: 100%;
+  padding: var(--spacing-3) var(--spacing-4);
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.search-bar__suggestion:hover {
+  background-color: var(--color-bg-tertiary);
+}
+
+.search-bar__suggestion:focus {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  outline: none;
+}
+
+.search-bar__suggestion-icon {
+  opacity: 0.6;
+  font-size: var(--font-size-sm);
+}
+
+/* 动画 */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* 移动端优化 */
+@media (max-width: 768px) {
+  .search-bar {
+    margin-bottom: var(--spacing-4);
+    padding: 0 var(--spacing-3);
+  }
+  
+  .search-bar__form {
+    flex-direction: column;
+    gap: var(--spacing-3);
+  }
+  
+  .search-bar__input-container {
+    border-radius: var(--radius-lg);
+  }
+  
+  .search-bar__input {
+    padding: var(--spacing-4) var(--spacing-16) var(--spacing-4) var(--spacing-12);
+    font-size: var(--font-size-base);
+  }
+  
+  .search-bar__submit-button {
+    width: 100%;
+    padding: var(--spacing-4);
+    border-radius: var(--radius-lg);
+    font-size: var(--font-size-base);
+  }
+  
+  .search-bar__character-count {
+    display: none;
+  }
+  
+  .search-bar__suggestions {
+    left: var(--spacing-3);
+    right: var(--spacing-3);
+  }
+}
+
+/* 小屏幕优化 */
+@media (max-width: 480px) {
+  .search-bar {
+    padding: 0 var(--spacing-2);
+  }
+  
+  .search-bar__input {
+    font-size: var(--font-size-sm);
+    padding: var(--spacing-3) var(--spacing-12) var(--spacing-3) var(--spacing-10);
+  }
+  
+  .search-bar__icon {
+    left: var(--spacing-3);
+    font-size: var(--font-size-sm);
+  }
+  
+  .search-bar__clear-button {
+    right: var(--spacing-8);
+    width: 18px;
+    height: 18px;
+    font-size: 10px;
+  }
+  
+  .search-bar__submit-button {
+    padding: var(--spacing-3);
+    font-size: var(--font-size-sm);
+    min-width: 60px;
+  }
+  
+  .search-bar__help-text {
+    font-size: 10px;
+  }
+  
+  .search-bar__suggestions {
+    left: var(--spacing-2);
+    right: var(--spacing-2);
+  }
+}
+
+/* 触摸设备优化 */
+@media (hover: none) {
+  .search-bar__submit-button:hover {
+    transform: none;
+    box-shadow: none;
+  }
+  
+  .search-bar__clear-button:hover {
+    transform: translateY(-50%);
+  }
+}
+
+/* 高对比度模式 */
+@media (prefers-contrast: high) {
+  .search-bar__input-container {
+    border-width: 3px;
+    border-color: var(--color-black);
+  }
+  
+  .search-bar__input-container--focused {
+    border-color: var(--color-primary);
+  }
+  
+  .search-bar__submit-button {
+    border: 2px solid var(--color-black);
+  }
+}
+
+/* 减少动画效果 */
+@media (prefers-reduced-motion: reduce) {
+  .search-bar__input-container,
+  .search-bar__clear-button,
+  .search-bar__submit-button,
+  .search-bar__suggestion {
+    transition: none;
+  }
+  
+  .search-bar__loading-spinner,
+  .search-bar__button-spinner {
+    animation: none;
+  }
+  
+  .search-bar__submit-button:hover {
+    transform: none;
+  }
+}
+
+/* 打印样式 */
+@media print {
+  .search-bar {
+    display: none;
+  }
+}
+
+/* 对焦点环增强 */
+@media (prefers-reduced-motion: no-preference) {
+  .search-bar__input-container--focused {
+    animation: focus-pulse 2s infinite;
+  }
+}
+
+@keyframes focus-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.2);
+  }
+}
