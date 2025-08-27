@@ -1,11 +1,41 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './LoadingStates.css';
 
 // 骨架屏卡片组件
-export const SkeletonCard = () => {
+export const SkeletonCard = ({ delay = 0, variant = 'default' }) => {
+  const [isVisible, setIsVisible] = useState(delay === 0);
+
+  useEffect(() => {
+    if (delay > 0) {
+      const timer = setTimeout(() => setIsVisible(true), delay);
+      return () => clearTimeout(timer);
+    }
+  }, [delay]);
+
+  const getRandomHeight = () => {
+    // 模拟不同高度的图片，符合瀑布流特性
+    const heights = ['240px', '280px', '320px', '300px', '260px'];
+    return heights[Math.floor(Math.random() * heights.length)];
+  };
+
+  const [imageHeight] = useState(getRandomHeight());
+
+  if (!isVisible) {
+    return <div className="skeleton-card skeleton-card--hidden"></div>;
+  }
+
   return (
-    <div className="skeleton-card">
-      <div className="skeleton-image"></div>
+    <article 
+      className={`skeleton-card skeleton-card--${variant}`}
+      role="article"
+      aria-label="正在加载内容"
+      aria-busy="true"
+    >
+      <div 
+        className="skeleton-image"
+        style={{ height: imageHeight }}
+        aria-label="图片加载中"
+      ></div>
       <div className="skeleton-content">
         <div className="skeleton-title"></div>
         <div className="skeleton-meta">
@@ -16,7 +46,7 @@ export const SkeletonCard = () => {
           </div>
         </div>
       </div>
-    </div>
+    </article>
   );
 };
 
@@ -30,11 +60,19 @@ export const SpinLoader = ({ size = 'medium', color = 'primary' }) => {
 };
 
 // 加载状态容器
-export const LoadingContainer = ({ children, message = '加载中...' }) => {
+export const LoadingContainer = ({ 
+  children, 
+  message = '加载中...', 
+  showProgress = false,
+  progress = 0 
+}) => {
   return (
-    <div className="loading-container">
+    <div className="loading-container" role="status" aria-live="polite">
       <SpinLoader />
-      <p className="loading-message">{message}</p>
+      <p className="loading-message" aria-label={message}>{message}</p>
+      {showProgress && (
+        <ProgressLoader progress={progress} showPercentage={false} />
+      )}
       {children}
     </div>
   );
@@ -62,16 +100,22 @@ export const ErrorState = ({
   icon = '😞', 
   title = '出错了', 
   description = '请稍后重试',
-  onRetry = null 
+  onRetry = null,
+  retryText = '重试' 
 }) => {
   return (
-    <div className="error-state">
-      <div className="error-state__icon">{icon}</div>
+    <div className="error-state" role="alert" aria-live="assertive">
+      <div className="error-state__icon" aria-hidden="true">{icon}</div>
       <h3 className="error-state__title">{title}</h3>
       <p className="error-state__description">{description}</p>
       {onRetry && (
-        <button className="error-state__retry" onClick={onRetry}>
-          重试
+        <button 
+          className="error-state__retry" 
+          onClick={onRetry}
+          type="button"
+          aria-label={`${retryText}，${description}`}
+        >
+          {retryText}
         </button>
       )}
     </div>
@@ -109,11 +153,42 @@ export const ProgressLoader = ({ progress = 0, showPercentage = false }) => {
 };
 
 // 列表骨架屏
-export const SkeletonList = ({ count = 3 }) => {
+export const SkeletonList = ({ count = 6 }) => {
+  // 根据屏幕大小动态调整骨架屏数量
+  const getResponsiveCount = () => {
+    if (typeof window === 'undefined') return count;
+    
+    const width = window.innerWidth;
+    if (width < 600) return Math.min(count, 4); // 手机端显示4个
+    if (width < 768) return Math.min(count, 6); // 平板端显示6个
+    if (width < 1024) return Math.min(count, 8); // 中等屏幕显示8个
+    return count; // 大屏幕显示指定数量
+  };
+
+  const [skeletonCount, setSkeletonCount] = React.useState(getResponsiveCount());
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      setSkeletonCount(getResponsiveCount());
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [count]);
+
   return (
-    <div className="skeleton-list">
-      {Array.from({ length: count }, (_, index) => (
-        <SkeletonCard key={index} />
+    <div 
+      className="skeleton-list"
+      role="feed"
+      aria-label="正在加载帖子列表"
+      aria-busy="true"
+    >
+      {Array.from({ length: skeletonCount }, (_, index) => (
+        <SkeletonCard 
+          key={index} 
+          delay={index * 100} // 错开动画时间，减少性能压力
+          variant={index % 2 === 0 ? 'default' : 'alternate'}
+        />
       ))}
     </div>
   );

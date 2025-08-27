@@ -1,18 +1,57 @@
 /* 骨架屏卡片样式 */
 .skeleton-card {
+  position: relative;
   background: var(--color-bg-primary);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
-  margin-bottom: var(--spacing-4);
+  border: 1px solid var(--color-border-light);
+  transition: all var(--transition-normal);
+  /* 与 PostCard 保持一致的样式 */
+}
+
+.skeleton-card--hidden {
+  opacity: 0;
+  height: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  box-shadow: none;
+}
+
+.skeleton-card--alternate {
+  /* 交替样式，增加视觉多样性 */
+  border-radius: var(--radius-lg);
 }
 
 .skeleton-image {
+  position: relative;
   width: 100%;
-  height: 200px;
-  background: linear-gradient(90deg, var(--color-gray-200) 25%, var(--color-gray-100) 50%, var(--color-gray-200) 75%);
+  /* 使用动态高度，与 PostCard 的 aspect-ratio 类似 */
+  background: linear-gradient(
+    90deg, 
+    var(--color-gray-200) 25%, 
+    var(--color-gray-100) 50%, 
+    var(--color-gray-200) 75%
+  );
   background-size: 200% 100%;
-  animation: skeleton-loading 1.5s infinite ease-in-out;
+  animation: skeleton-loading 2s infinite ease-in-out;
+  /* 添加更自然的动画延迟 */
+}
+
+.skeleton-image::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--color-gray-300);
+  border-top-color: var(--color-gray-200);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  opacity: 0.6;
 }
 
 .skeleton-content {
@@ -20,12 +59,37 @@
 }
 
 .skeleton-title {
-  height: 20px;
-  background: linear-gradient(90deg, var(--color-gray-200) 25%, var(--color-gray-100) 50%, var(--color-gray-200) 75%);
+  height: 18px;
+  width: 85%;
+  background: linear-gradient(
+    90deg, 
+    var(--color-gray-200) 25%, 
+    var(--color-gray-100) 50%, 
+    var(--color-gray-200) 75%
+  );
   background-size: 200% 100%;
-  animation: skeleton-loading 1.5s infinite ease-in-out;
+  animation: skeleton-loading 2s infinite ease-in-out;
+  animation-delay: 0.2s;
   border-radius: var(--radius-sm);
   margin-bottom: var(--spacing-3);
+}
+
+.skeleton-title::after {
+  content: '';
+  display: block;
+  width: 60%;
+  height: 16px;
+  margin-top: var(--spacing-1);
+  background: linear-gradient(
+    90deg, 
+    var(--color-gray-300) 25%, 
+    var(--color-gray-200) 50%, 
+    var(--color-gray-300) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 2s infinite ease-in-out;
+  animation-delay: 0.3s;
+  border-radius: var(--radius-sm);
 }
 
 .skeleton-meta {
@@ -35,11 +99,17 @@
 }
 
 .skeleton-author {
-  height: 16px;
-  width: 80px;
-  background: linear-gradient(90deg, var(--color-gray-200) 25%, var(--color-gray-100) 50%, var(--color-gray-200) 75%);
+  height: 14px;
+  width: 70px;
+  background: linear-gradient(
+    90deg, 
+    var(--color-gray-200) 25%, 
+    var(--color-gray-100) 50%, 
+    var(--color-gray-200) 75%
+  );
   background-size: 200% 100%;
-  animation: skeleton-loading 1.5s infinite ease-in-out;
+  animation: skeleton-loading 2s infinite ease-in-out;
+  animation-delay: 0.4s;
   border-radius: var(--radius-sm);
 }
 
@@ -49,12 +119,25 @@
 }
 
 .skeleton-stat {
-  height: 16px;
-  width: 40px;
-  background: linear-gradient(90deg, var(--color-gray-200) 25%, var(--color-gray-100) 50%, var(--color-gray-200) 75%);
+  height: 14px;
+  width: 35px;
+  background: linear-gradient(
+    90deg, 
+    var(--color-gray-200) 25%, 
+    var(--color-gray-100) 50%, 
+    var(--color-gray-200) 75%
+  );
   background-size: 200% 100%;
-  animation: skeleton-loading 1.5s infinite ease-in-out;
+  animation: skeleton-loading 2s infinite ease-in-out;
   border-radius: var(--radius-sm);
+}
+
+.skeleton-stat:first-child {
+  animation-delay: 0.5s;
+}
+
+.skeleton-stat:last-child {
+  animation-delay: 0.6s;
 }
 
 @keyframes skeleton-loading {
@@ -63,6 +146,29 @@
   }
   100% {
     background-position: -200% 0;
+  }
+}
+
+/* 骨架屏悬停效果 */
+.skeleton-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--color-border);
+}
+
+/* 性能优化：减少动画偏好支持 */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-image,
+  .skeleton-title,
+  .skeleton-title::after,
+  .skeleton-author,
+  .skeleton-stat {
+    animation: none;
+    background: var(--color-gray-200);
+  }
+  
+  .skeleton-card:hover {
+    transform: none;
   }
 }
 
@@ -197,18 +303,33 @@
   padding: var(--spacing-3) var(--spacing-6);
   background-color: var(--color-primary);
   color: var(--color-white);
+  border: none;
   border-radius: var(--radius-lg);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
-  transition: background-color var(--transition-fast);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .error-state__retry:hover {
   background-color: var(--color-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.error-state__retry:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 .error-state__retry:active {
-  transform: translateY(1px);
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
 }
 
 /* 脉冲加载器样式 */
@@ -278,29 +399,67 @@
 
 /* 列表骨架屏样式 */
 .skeleton-list {
-  display: flex;
-  flex-direction: column;
+  /* 与 PostList 保持一致的网格布局 */
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: var(--spacing-4);
+  padding: var(--spacing-2) 0;
+  margin-bottom: var(--spacing-8);
 }
 
-/* 移动端适配 */
+/* 响应式设计 - 与 PostList 保持一致 */
+@media (min-width: 1200px) {
+  .skeleton-list {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--spacing-6);
+  }
+}
+
+@media (max-width: 1024px) {
+  .skeleton-list {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: var(--spacing-4);
+  }
+}
+
 @media (max-width: 768px) {
+  .skeleton-list {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: var(--spacing-3);
+  }
+  
   .skeleton-image {
-    height: 150px;
+    height: 200px !important; /* 移动端固定高度 */
+  }
+}
+
+@media (max-width: 600px) {
+  .skeleton-list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-2);
   }
   
-  .loading-container {
-    padding: var(--spacing-8) var(--spacing-4);
+  .skeleton-content {
+    padding: var(--spacing-3);
   }
   
-  .empty-state,
-  .error-state {
-    padding: var(--spacing-12) var(--spacing-4);
+  .skeleton-title {
+    height: 16px;
+    margin-bottom: var(--spacing-2);
   }
   
-  .empty-state__icon,
-  .error-state__icon {
-    font-size: var(--font-size-3xl);
+  .skeleton-title::after {
+    height: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .skeleton-list {
+    gap: var(--spacing-1);
+  }
+  
+  .skeleton-content {
+    padding: var(--spacing-2);
   }
 }
 

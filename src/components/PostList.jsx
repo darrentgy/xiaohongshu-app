@@ -174,7 +174,7 @@ const PostList = () => {
       
       {/* 初始加载状态 */}
       {initialLoading ? (
-        <SkeletonList count={6} />
+        <SkeletonList count={12} />
       ) : (
         <>
           {/* 帖子列表 */}
